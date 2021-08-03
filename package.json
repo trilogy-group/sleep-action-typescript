@@ -1,0 +1,25 @@
+{
+  "name": "invocables-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trilogy-group/invocables-typescript.git"
+  },
+  "keywords": [],
+  "author": "Ashwanth A R <ashwanth1109@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trilogy-group/invocables-typescript/issues"
+  },
+  "homepage": "https://github.com/trilogy-group/invocables-typescript#readme",
+  "devDependencies": {
+    "@types/node": "14.14.31",
+    "ts-node": "9.1.1",
+    "typescript": "4.2.2"
+  }
+}
