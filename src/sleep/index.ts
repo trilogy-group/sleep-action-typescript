@@ -27,7 +27,6 @@ export const handler = async (input: string): Promise<ActionOutput> => {
     const { body } = inputAsJson;
     const { delayTime } = body;
     await delay(delayTime);
-
     return {
       statusCode: 200,
       body: JSON.stringify({ delayTime }),
