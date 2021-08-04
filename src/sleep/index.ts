@@ -23,7 +23,6 @@ interface ActionOutput {
 
 export const handler = async (input: string): Promise<ActionOutput> => {
   try {
-
     const inputAsJson: ActionInput = JSON.parse(input);
     const { body } = inputAsJson;
     const { delayTime } = body;
