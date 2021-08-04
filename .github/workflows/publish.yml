@@ -38,7 +38,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
-          aws s3 cp s3://devflows-function-framework/typescript/setup.sh ./.devflows/setup.sh
+          aws s3 cp s3://devflows-function-framework/temp-dir/typescript/setup.sh ./.devflows/setup.sh
           chmod +x ./.devflows/setup.sh
           ./.devflows/setup.sh
           docker build -f .devflows/Dockerfile -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
