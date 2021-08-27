@@ -16,10 +16,12 @@ interface ActionInput {
   };
 }
 
+
 interface ActionOutput {
   statusCode: number;
   body: string;
 }
+
 
 export const handler = async (input: string): Promise<ActionOutput> => {
   try {
