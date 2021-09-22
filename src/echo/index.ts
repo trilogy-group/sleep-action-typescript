@@ -31,6 +31,7 @@ export const handler = async (input: string): Promise<ActionOutput> => {
       body: JSON.stringify(body),
     };
   } catch (e) {
+    console.log(e);
     console.error(e);
 
     return {
