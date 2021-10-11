@@ -38,9 +38,15 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
-          aws s3 cp s3://devflows-function-framework/typescript/setup.sh ./.devflows/setup.sh
-          chmod +x ./.devflows/setup.sh
-          ./.devflows/setup.sh
+          aws s3 cp s3://devflows-function-framework/temp/typescript/.dockerignore ./.devflows/.dockerignore
+          aws s3 cp s3://devflows-function-framework/temp/typescript/entry.sh ./.devflows/entry.sh
+          aws s3 cp s3://devflows-function-framework/temp/typescript/init.sh ./.devflows/init.sh
+          aws s3 cp s3://devflows-function-framework/temp/typescript/Dockerfile ./.devflows/Dockerfile
+          aws s3 cp s3://devflows-function-framework/temp/typescript/server.ts ./.devflows/server.ts
+          aws s3 cp s3://devflows-function-framework/temp/typescript/action-server.ts ./.devflows/action-server.ts
+          aws s3 cp s3://devflows-function-framework/temp/typescript/index.ts ./.devflows/index.ts
+          aws s3 cp s3://devflows-function-framework/temp/extensions/logs-extension ./.devflows/extensions/logs-extension
+          aws s3 cp s3://devflows-function-framework/temp/mini-proxy/mini-proxy ./.devflows/mini-proxy
           docker build -f .devflows/Dockerfile -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
 
