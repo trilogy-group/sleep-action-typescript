@@ -34,7 +34,7 @@ jobs:
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
           SHA=`echo ${GITHUB_SHA} | cut -c1-7`
-          IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/}-${SHA}-arm64 | sed "s/[^[:alnum:]]/-/g")
+          IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/}-${SHA}-amd64 | sed "s/[^[:alnum:]]/-/g")
           echo ::set-output name=tags::${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
 
       - name: Copy Devflows Runtimes
@@ -52,7 +52,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
         with:
-          platforms: linux/arm64
+          platforms: linux/amd64
       
       - name: Set up Docker Buildx
         id: buildx
@@ -64,7 +64,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: .devflows/Dockerfile
-          platforms: linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.compute-tag.outputs.tags }}
 
