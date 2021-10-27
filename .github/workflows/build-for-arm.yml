@@ -1,0 +1,71 @@
+name: Docker Image CI [arm64]
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GITHUB_TOKEN: ${{ secrets.ENG_STD_TOKEN }}
+
+jobs:
+  setup-build-publish:
+    name: Build and Push Docker image to ECR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEVFLOWS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEVFLOWS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Compute Tag
+        run: |
+          SHA=`echo ${GITHUB_SHA} | cut -c1-7`
+          echo "IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/}-${SHA}-arm64 | sed "s/[^[:alnum:]]/-/g")" >> $GITHUB_ENV
+      
+      - name: Copy Devflows Runtimes
+        run: |
+          aws s3 cp s3://devflows-function-framework/typescript/.dockerignore ./.devflows/.dockerignore
+          aws s3 cp s3://devflows-function-framework/typescript/entry.sh ./.devflows/entry.sh
+          aws s3 cp s3://devflows-function-framework/typescript/init.sh ./.devflows/init.sh
+          aws s3 cp s3://devflows-function-framework/typescript/Dockerfile ./.devflows/Dockerfile
+          aws s3 cp s3://devflows-function-framework/typescript/server.ts ./.devflows/server.ts
+          aws s3 cp s3://devflows-function-framework/typescript/action-server.ts ./.devflows/action-server.ts
+          aws s3 cp s3://devflows-function-framework/typescript/index.ts ./.devflows/index.ts
+          aws s3 cp s3://devflows-function-framework/extensions/logs-extension ./.devflows/extensions/logs-extension
+          aws s3 cp s3://devflows-function-framework/mini-proxy/mini-proxy ./.devflows/mini-proxy
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@master
+        with:
+          platforms: linux/arm64
+      
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+
+      - name: Build
+        uses: docker/build-push-action@v2
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: devflows/${{ github.repository }}
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: .devflows/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+
+      - name: Log out of Amazon ECR
+        if: always()
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}
