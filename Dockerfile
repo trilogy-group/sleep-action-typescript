@@ -46,3 +46,4 @@ WORKDIR ${RUNTIME_DIR}
 EXPOSE 8000
 ENTRYPOINT ["./entry.sh"]
 CMD ["echo"]
+
