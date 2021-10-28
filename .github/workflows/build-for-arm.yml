@@ -62,9 +62,10 @@ jobs:
         env:
           tags: ${{ steps.compute-tag.outputs.tags }}
         run: |
-          # docker buildx build --platform linux/amd64 --tag ${tags} -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
-          # docker push ${tags}
+          docker buildx build --platform linux/amd64 --tag ${tags} -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
+          docker image ls
           echo ${tags}
+          docker push ${tags}
           
       - name: Log out of Amazon ECR
         if: always()
