@@ -50,20 +50,20 @@ jobs:
           aws s3 cp s3://devflows-function-framework/mini-proxy/mini-proxy ./.devflows/mini-proxy
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@master
+        uses: docker/setup-qemu-action@v1
         with:
           platforms: linux/amd64
       
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@master
+        uses: docker/setup-buildx-action@v1
 
       - name: Build and Push to ECR
         env:
           tags: ${{ steps.compute-tag.outputs.tags }}
         run: |
           docker buildx build --push --platform linux/amd64 --tag ${tags} -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
-
+          
       - name: Log out of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}

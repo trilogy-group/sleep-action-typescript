@@ -9,14 +9,16 @@ export AWS_PROFILE=saml
 aws s3 cp s3://devflows-function-framework/typescript/.dockerignore ./.devflows/.dockerignore
 aws s3 cp s3://devflows-function-framework/typescript/entry.sh ./.devflows/entry.sh
 aws s3 cp s3://devflows-function-framework/typescript/init.sh ./.devflows/init.sh
-aws s3 cp s3://devflows-function-framework/typescript/Dockerfile ./.devflows/Dockerfile
 aws s3 cp s3://devflows-function-framework/typescript/server.ts ./.devflows/server.ts
 aws s3 cp s3://devflows-function-framework/typescript/action-server.ts ./.devflows/action-server.ts
 aws s3 cp s3://devflows-function-framework/typescript/index.ts ./.devflows/index.ts
-aws s3 cp s3://devflows-function-framework/extensions/logs-extension ./.devflows/extensions/logs-extension
-aws s3 cp s3://devflows-function-framework/mini-proxy/mini-proxy ./.devflows/mini-proxy
+aws s3 cp s3://devflows-function-framework/arm64/extensions/logs-extension ./.devflows/extensions/logs-extension
+aws s3 cp s3://devflows-function-framework/arm64/mini-proxy/mini-proxy ./.devflows/mini-proxy
 
-sudo docker buildx build \
-    --platform linux/arm64 \
-    --tag ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
-    -f .devflows/Dockerfile .
+aws ecr get-login-password --region us-east-1 --profile saml | sudo docker login --username AWS --password-stdin $ECR_REGISTRY
+
+sudo docker buildx build --no-cache --push \
+	--platform linux/arm64 \
+	--tag ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
+	-f Dockerfile .
+
