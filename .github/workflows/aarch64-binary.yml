@@ -17,7 +17,7 @@ jobs:
         id: runcmd
         with:
           arch: aarch64
-          distro: ubuntu-18.04
+          distro: ubuntu18.04
 
           # Not required, but speeds up builds by storing container images in
           # a GitHub package registry.
