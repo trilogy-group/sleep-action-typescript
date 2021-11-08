@@ -3,7 +3,7 @@ name: Docker Image CI [arm64]
 on:
   push:
     branches:
-      - main
+      - none
 
 env:
   GITHUB_TOKEN: ${{ secrets.ENG_STD_TOKEN }}
