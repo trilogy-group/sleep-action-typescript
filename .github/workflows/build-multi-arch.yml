@@ -1,9 +1,9 @@
-name: Docker Image CI [arm64]
+name: Docker Image CI [multi-arch]
 
 on:
   push:
     branches:
-      - none
+      - main
 
 env:
   GITHUB_TOKEN: ${{ secrets.ENG_STD_TOKEN }}
@@ -34,25 +34,13 @@ jobs:
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
           SHA=`echo ${GITHUB_SHA} | cut -c1-7`
-          IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/}-${SHA}-amd64 | sed "s/[^[:alnum:]]/-/g")
+          IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/}-${SHA} | sed "s/[^[:alnum:]]/-/g")
           echo ::set-output name=tags::${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
-
-      - name: Copy Devflows Runtimes
-        run: |
-          aws s3 cp s3://devflows-function-framework/typescript/.dockerignore ./.devflows/.dockerignore
-          aws s3 cp s3://devflows-function-framework/typescript/entry.sh ./.devflows/entry.sh
-          aws s3 cp s3://devflows-function-framework/typescript/init.sh ./.devflows/init.sh
-          aws s3 cp s3://devflows-function-framework/typescript/Dockerfile ./.devflows/Dockerfile
-          aws s3 cp s3://devflows-function-framework/typescript/server.ts ./.devflows/server.ts
-          aws s3 cp s3://devflows-function-framework/typescript/action-server.ts ./.devflows/action-server.ts
-          aws s3 cp s3://devflows-function-framework/typescript/index.ts ./.devflows/index.ts
-          aws s3 cp s3://devflows-function-framework/extensions/logs-extension ./.devflows/extensions/logs-extension
-          aws s3 cp s3://devflows-function-framework/mini-proxy/mini-proxy ./.devflows/mini-proxy
-
+    
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
       
       - name: Set up Docker Buildx
         id: buildx
@@ -62,7 +50,8 @@ jobs:
         env:
           tags: ${{ steps.compute-tag.outputs.tags }}
         run: |
-          docker buildx build --push --platform linux/amd64 --tag ${tags} -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
+          aws s3 cp s3://devflows-function-framework/typescript/Dockerfile ./.devflows/Dockerfile
+          docker buildx build --push --platform linux/amd64,linux/arm64 --tag ${tags} -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
           
       - name: Log out of Amazon ECR
         if: always()
