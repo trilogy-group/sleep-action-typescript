@@ -51,7 +51,7 @@ jobs:
           tags: ${{ steps.compute-tag.outputs.tags }}
         run: |
           aws s3 cp s3://devflows-function-framework/arm-support/typescript/Dockerfile ./.devflows/Dockerfile
-          docker buildx build --push --platform linux/amd64,linux/arm64 --tag ${tags} -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
+          docker buildx build --push --platform linux/arm64 --tag ${tags} -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
           
       - name: Log out of Amazon ECR
         if: always()
