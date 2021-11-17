@@ -45,13 +45,21 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
-
+        
+      - name: Inspect builder
+        run: |
+          echo "Name:      ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status:    ${{ steps.buildx.outputs.status }}"
+          echo "Flags:     ${{ steps.buildx.outputs.flags }}"
+          echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
+      
       - name: Build and Push to ECR
         env:
           tags: ${{ steps.compute-tag.outputs.tags }}
         run: |
           aws s3 cp s3://devflows-function-framework/arm-support/typescript/Dockerfile ./.devflows/Dockerfile
-          docker buildx build --push --platform linux/arm64 --tag ${tags}-arm64 -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
+          # docker buildx build --push --platform linux/arm64 --tag ${tags}-arm64 -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
        
       - name: Log out of Amazon ECR
         if: always()
