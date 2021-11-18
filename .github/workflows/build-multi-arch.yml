@@ -28,15 +28,10 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Compute Tag
-        id: compute-tag
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
           SHA=`echo ${GITHUB_SHA} | cut -c1-7`
-          IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/}-${SHA} | sed "s/[^[:alnum:]]/-/g")
-          echo ::set-output name=tags::${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
-    
+          echo "IMAGE_TAG=$(echo ${GITHUB_REF#refs/heads/}-${SHA} | sed "s/[^[:alnum:]]/-/g")" >> $GITHUB_ENV
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
@@ -48,12 +43,13 @@ jobs:
         
       - name: Build and Push to ECR
         env:
-          tags: ${{ steps.compute-tag.outputs.tags }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
-          # aws s3 cp s3://devflows-function-framework/arm-support/typescript/Dockerfile ./.devflows/Dockerfile
-          # docker buildx build --push --platform linux/arm64 --tag ${tags}-arm64 -f .devflows/Dockerfile --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
-          bash build.sh
+          aws s3 cp s3://devflows-function-framework/arm-support/typescript/build-arm64.sh ./build.sh
+          chmod +x build.sh
+          ./build.sh
+
       - name: Log out of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
-
