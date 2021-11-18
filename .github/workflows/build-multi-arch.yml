@@ -46,7 +46,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
-          aws s3 cp s3://devflows-function-framework/arm-support/typescript/build-arm64.sh ./build.sh
+          aws s3 cp s3://devflows-function-framework/arm-support-typescript/typescript/build-arm64.sh ./build.sh
           chmod +x build.sh
           ./build.sh
 
