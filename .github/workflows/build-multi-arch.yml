@@ -1,4 +1,6 @@
-name: Docker Image CI [multi-arch]
+# DO NOT update this file. It is supposed to be managed by devflows system only.
+
+name: Docker Image CI [arm64]
 
 on:
   push:
@@ -46,9 +48,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
-          aws s3 cp s3://devflows-function-framework/arm-support-typescript/typescript/build-arm64.sh ./build.sh
-          chmod +x build.sh
-          ./build.sh
+          aws s3 cp s3://devflows-function-framework/typescript/Dockerfile ./Dockerfile
+          docker buildx build --push --platform linux/arm64 --tag ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}-arm64 --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
 
       - name: Log out of Amazon ECR
         if: always()
