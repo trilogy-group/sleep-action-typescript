@@ -15,9 +15,7 @@ aws s3 cp s3://devflows-function-framework/typescript/index.ts ./.devflows/index
 aws s3 cp s3://devflows-function-framework/arm64/extensions/logs-extension ./.devflows/extensions/logs-extension
 aws s3 cp s3://devflows-function-framework/arm64/mini-proxy/mini-proxy ./.devflows/mini-proxy
 
-aws ecr get-login-password --region us-east-1 --profile saml | sudo docker login --username AWS --password-stdin $ECR_REGISTRY
-
-sudo docker buildx build --no-cache --push \
+docker buildx --no-cache --push \
 	--platform linux/arm64 \
 	--tag ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} \
 	-f Dockerfile .
