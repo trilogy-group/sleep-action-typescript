@@ -48,7 +48,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
-          aws s3 cp s3://devflows-function-framework/arm-support-typescript/typescript/Dockerfile.arm64 ./.devflows/Dockerfile
+          aws s3 cp s3://devflows-function-framework/arm-support/typescript/Dockerfile.arm64 ./.devflows/Dockerfile
           docker buildx build --push -f .devflows/Dockerfile --platform linux/arm64 --tag ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}-arm64 --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
 
       - name: Log out of Amazon ECR
