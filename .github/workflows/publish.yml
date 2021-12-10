@@ -12,7 +12,7 @@ jobs:
   setup-build-publish:
     name: Build and Push Docker image to ECR
     if: github.repository != 'trilogy-group/cn-devflows-function-typescript-skeleton'
-    runs-on: [self-hosted, linux, x64]
+    runs-on: [self-hosted, linux, ARM64]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
