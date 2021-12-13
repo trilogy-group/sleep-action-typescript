@@ -85,3 +85,4 @@ Any value being set on the configuration settings for your application is access
 For testing locally, you can run `gp env ENV_NAME=ENV_VALUE` on your terminal window to set mock values for the configuration variables.
 
 To update the current terminal session with the latest set of persistent environment variables, run `eval $(gp env -e)`. You can verify that the environment variable is accessible by running the command `echo $ENV_NAME`.
+
