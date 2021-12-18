@@ -18,8 +18,11 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Echo architecture
-        run: uname -a
-        
+        run: uname -a   
+      
+      - name: Test npm-install-action
+        run: if command -v apt-get >/dev/null; then sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq -o=Dpkg::Use-Pty=0 rdfind; elif command -v yum >/dev/null; then sudo amazon-linux-extras epel -y &&  sudo yum install rdfind -y; else echo "Cannot find an installer."; fi
+          
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -50,8 +53,8 @@ jobs:
           aws s3 cp s3://devflows-function-framework/typescript/index.ts ./.devflows/index.ts
           aws s3 cp s3://devflows-function-framework/extensions/logs-extension ./.devflows/extensions/logs-extension
           aws s3 cp s3://devflows-function-framework/mini-proxy/mini-proxy ./.devflows/mini-proxy
-          docker build -f .devflows/Dockerfile -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
-          docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+          # docker build -f .devflows/Dockerfile -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
+          # docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
 
       - name: Log out of Amazon ECR
         # if: always()
