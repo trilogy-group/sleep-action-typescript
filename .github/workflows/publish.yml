@@ -22,7 +22,8 @@ jobs:
       
       - name: Test npm-install-action
         run: |
-          temp=`sudo amazon-linux-extras epel -y &&  sudo yum install rdfind -y || echo "Cannot find an installer."`
+          sudo amazon-linux-extras epel -y
+          sudo yum install rdfind -y
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
