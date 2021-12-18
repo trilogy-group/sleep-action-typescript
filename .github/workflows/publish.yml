@@ -22,7 +22,7 @@ jobs:
       
       - name: Test npm-install-action
         run: |
-          temp=`command -v apt-get >/dev/null && then sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq -o=Dpkg::Use-Pty=0 rdfind || command -v yum >/dev/null && sudo amazon-linux-extras epel -y &&  sudo yum install rdfind -y || echo "Cannot find an installer."`
+          temp=`command -v apt-get >/dev/null && sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq -o=Dpkg::Use-Pty=0 rdfind || command -v yum >/dev/null && sudo amazon-linux-extras epel -y &&  sudo yum install rdfind -y || echo "Cannot find an installer."`
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
