@@ -11,6 +11,7 @@ env:
 jobs:
   setup-build-publish:
     name: Build and Push Docker image to ECR
+    if: github.repository != 'trilogy-group/cn-devflows-function-typescript-skeleton'
     runs-on: [self-hosted, linux, arm64]
     steps:
       - name: Checkout
@@ -37,10 +38,10 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devflows/${{ github.repository }}
         run: |
-          aws s3 cp s3://devflows-function-framework/python/setup-arm64.sh ./setup.sh
-          chmod +x ./setup.sh
-          ./setup.sh
-          docker build -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
+          aws s3 cp s3://devflows-function-framework/typescript/setup-arm64.sh ./.devflows/setup.sh
+          chmod +x ./.devflows/setup.sh
+          ./.devflows/setup.sh
+          docker build -f .devflows/Dockerfile -t ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG} --build-arg GITHUB_TOKEN --build-arg GITHUB_REPOSITORY --build-arg GITHUB_RUN_ID .
           docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
 
       - name: Log out of Amazon ECR
