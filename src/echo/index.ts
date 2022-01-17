@@ -43,4 +43,3 @@ export const handler = async (input: string): Promise<ActionOutput> => {
     };
   }
 };
-
